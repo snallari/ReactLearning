@@ -1,0 +1,62 @@
+.postContainer{
+    margin: 10px;
+    margin-left: 30px;
+    margin-right: 30px;
+    background-color: lightsteelblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.postHeader{
+    color: lightsalmon;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.addPost{
+    color: white;
+}
+
+.btnClass{
+    margin-top: 27px;
+    background-color: lightsteelblue !important;
+    color: white;
+}
+
+.mar-top{
+    margin-top:27px;
+}
+
+.item{
+    margin: 10px;
+    text-align: start;
+    padding: 10px;
+    background-color: lightcoral
+}
+.itemText{
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    width: 150px;
+    overflow: hidden;
+    font-size: 10px;
+}
+.itemHeaderText{
+    font-size: 12px;
+    font-weight: bold;
+}
+.itemSubHeaderText{
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.MuiButton-containedPrimary{
+    background-color: lightsteelblue !important;
+    color: white;
+}
+
+.mar-top{
+    margin-top:27px;
+}
+
+.MuiFormControl-root{
+    margin-top: 10px;
+}
