@@ -48,6 +48,7 @@ export class CreatePost extends Component {
         id:this.props.post._id,
         title: this.props.post.title,
         description: this.props.post.description,
+        classType:"math8",
         notes:this.props.post.notes,
         errorTitle: "",
         errorDesc: "",
@@ -58,18 +59,32 @@ export class CreatePost extends Component {
   sendPost = (event) => {
     event.preventDefault();
     let list=[]
+    let data
     let url=""
     if(this.state.heading !== "Edit Post"){
       const { title, description, notes, classType} = this.state;
+      data={
+        "title":title,
+        "description":description,
+        "notes":notes,
+        "classType":classType,
+      }
       url="http://localhost:8081/addClasses"
       list.push({title, description, notes, classType})
     }else{
-      const { title, description, notes ,id} = this.state;
-      url="http://localhost:8081/editClasses"
+      const { title, description, notes ,classType,id} = this.state;
+      data={
+        "title":title,
+        "description":description,
+        "notes":notes,
+        "classType":classType,
+        "_id":id
+      }
+      url="http://localhost:8081/addClasses"
       list.push({title, description, notes, id});
     }
     axios
-      .post(url, list)
+      .post(url, data)
       .then((response) => {
         console.log(response.data);
         if (response.insertedCount != 0) {

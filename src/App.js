@@ -34,6 +34,7 @@ import GetPost from './components/API/GetPostList/GetPost';
 import CreatePost from './components/API/Dialogs/CreatePost';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { createTheme } from '@material-ui/core/styles';
+import PostDetails from './components/API/Details/PostDetails';
 // function App() {
 //   return (
 //     <div className="App">
@@ -108,6 +109,9 @@ const App = () => (
         </Route>
         <Route path="/posts">
             <ParentPost />
+        </Route>
+        <Route path="/postDetails">
+           <PostDetails/>
         </Route>
       </Switch>
     </Suspense>

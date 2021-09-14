@@ -3,6 +3,13 @@ import axios from "axios";
 import { Card, Grid, CardContent, Typography, Button, Dialog, DialogActions, DialogContent } from "@material-ui/core";
 import "../ParentPost.css";
 import CreatePost from "../Dialogs/CreatePost";
+import PostMenu from "../Menu/PostMenu";
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
 
 export class GetPost extends Component {
@@ -15,7 +22,8 @@ export class GetPost extends Component {
       error: "",
       open:false,
       item:{},
-      styleName:""
+      styleName:"",
+      isDetails:false
     };
   }
 
@@ -56,9 +64,10 @@ export class GetPost extends Component {
     console.log("post", post);
     this.setState({
       open: true,
-      item:post
+      item:post,
+      isDetails:false
     });
-    console.log(this.state.item)
+    console.log(this.state.isDetails)
   }
 
   handleClose = () => {
@@ -69,7 +78,8 @@ export class GetPost extends Component {
 
   render() {
     console.log(this.state);
-    const { posts, isLoading, error, styleName } = this.state;
+    const { posts, isLoading, error, styleName, isDetails } = this.state;
+    if(!isDetails){
     return (
       <div>
         <Grid container spacing={3}>
@@ -79,21 +89,24 @@ export class GetPost extends Component {
             posts.length > 0 ? (
               posts.map((post) => (
                 <Grid item xs={3} key={post._id}>
-                  <Card className={`item`} onClick={() => this.getItem(post)}>
+                  <Card className={`item`}>
                     <Grid container spacing={2}>
-                      <Grid className={"itemHeaderText"} item xs={12}>
+                      <Grid className={"itemHeaderText"} item xs={10} onClick={() => this.getItem(post)}> 
                         {post.title}
                       </Grid>
-                      <Grid className={"itemSubHeaderText"} item xs={4}>
+                      <Grid className={"itemHeaderText"} item xs={2}>
+                        <PostMenu getid={post._id}/>
+                      </Grid>
+                      <Grid className={"itemSubHeaderText"} item xs={4} onClick={() => this.getItem(post)}>
                         Description:
                       </Grid>
-                      <Grid className={"itemText"} item xs={8}>
+                      <Grid className={"itemText"} item xs={8} onClick={() => this.getItem(post)}>
                         {post.description}
                       </Grid>
-                      <Grid className={"itemSubHeaderText"} item xs={4}>
+                      <Grid className={"itemSubHeaderText"} item xs={4} onClick={() => this.getItem(post)}>
                         Notes:
                       </Grid>
-                      <Grid className={"itemText"} item xs={8}>
+                      <Grid className={"itemText"} item xs={8} onClick={() => this.getItem(post)}>
                         {post.notes ? post.notes : "....."}
                       </Grid>
                     </Grid>
@@ -125,6 +138,16 @@ export class GetPost extends Component {
         </Dialog>
       </div>
     );
+}else{
+  return(
+  <div>
+    <Redirect to={{
+      pathname: '/postDetails',
+      item: { item: this.state.item}
+    }} />
+  </div>
+  );
+}
   }
 }
 
