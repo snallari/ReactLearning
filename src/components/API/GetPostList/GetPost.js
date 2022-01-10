@@ -1,16 +1,28 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card, Grid, CardContent, Typography, Button, Dialog, DialogActions, DialogContent } from "@material-ui/core";
+import {
+  Paper,
+  Grid,
+  CardContent,
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Link
+} from "@material-ui/core";
 import "../ParentPost.css";
 import CreatePost from "../Dialogs/CreatePost";
 import PostMenu from "../Menu/PostMenu";
+import ErrorIcon from "@material-ui/icons/Error";
+import Tooltip from "@material-ui/core/Tooltip";
 import {
   BrowserRouter as Router,
-  Link,
   Route,
   Redirect,
 } from "react-router-dom";
-
+import PostDetailsContainer from "../Details/PostDetailsContainer";
+import companyLogo from "../../../logo.svg";
 
 export class GetPost extends Component {
   constructor(props) {
@@ -20,10 +32,11 @@ export class GetPost extends Component {
       isLoading: false,
       posts: {},
       error: "",
-      open:false,
-      item:{},
-      styleName:"",
-      isDetails:false
+      open: false,
+      item: {},
+      styleName: "",
+      isDetails: false,
+      isAdmin: props.isAdmin,
     };
   }
 
@@ -62,12 +75,15 @@ export class GetPost extends Component {
 
   getItem(post) {
     console.log("post", post);
-    this.setState({
-      open: true,
-      item:post,
-      isDetails:false
-    });
-    console.log(this.state.isDetails)
+    if (this.state.isAdmin) {
+      this.setState({
+        open: false,
+        item: post,
+        isDetails: true,
+      });
+    }
+
+    console.log(this.state.isDetails);
   }
 
   handleClose = () => {
@@ -79,75 +95,139 @@ export class GetPost extends Component {
   render() {
     console.log(this.state);
     const { posts, isLoading, error, styleName, isDetails } = this.state;
-    if(!isDetails){
-    return (
-      <div>
-        <Grid container spacing={3}>
-          {isLoading ? (
-            <div>Loading</div>
-          ) : posts ? (
-            posts.length > 0 ? (
-              posts.map((post) => (
-                <Grid item xs={3} key={post._id}>
-                  <Card className={`item`}>
-                    <Grid container spacing={2}>
-                      <Grid className={"itemHeaderText"} item xs={10} onClick={() => this.getItem(post)}> 
-                        {post.title}
+    if (!isDetails) {
+      return (
+        <div>
+          <Grid container spacing={3}>
+            {isLoading ? (
+              <div>Loading</div>
+            ) : posts ? (
+              posts.length > 0 ? (
+                posts.map((post) => (
+                  <Grid item xs={3} key={post._id}>
+                    <Paper
+                      my={6} py={3}
+                      className={`item`}
+                      elevation={post.classType === undefined ? 6 : 0}
+                    >
+                      <Grid
+                        container
+                        spacing={2}
+                        className={
+                          post.classType === undefined
+                            ? "unassigned"
+                            : post.classType === "mathCore"
+                            ? "mathcore"
+                            : post.classType === "algebra"
+                            ? "algebra"
+                            : "math8"
+                        } px={3}
+                      >
+                        {/* <Grid item xs={3} >
+                          <img
+                            src={companyLogo}
+                            alt="BigCo Inc. logo"
+                          />
+                        </Grid> */}
+                        <Grid  xs={12} container
+                        spacing={2} >
+                          <Grid
+                            className={"itemHeaderText"}
+                            item
+                            xs={9}
+                            onClick={() => this.getItem(post)}
+                          >
+                            {post.title}{" "}
+                            {post.classType === undefined ? (
+                              <Tooltip title="Class is not assigned">
+                                <ErrorIcon className={`alert`}></ErrorIcon>
+                              </Tooltip>
+                            ) : (
+                              <span></span>
+                            )}
+                          </Grid>
+                          {/* <Grid className={"itemHeaderText"}> */}
+                          <PostMenu
+                            getid={post._id}
+                            item
+                            xs={3}
+                            isAdmin={this.state.isAdmin}
+                            handleRefresh={() => this.props.handleClick("its me Child")}
+                          />
+                          {/* </Grid> */}
+                          <Grid
+                            className={"itemSubHeaderText"}
+                            item
+                            xs={4}
+                            onClick={() => this.getItem(post)}
+                          >
+                            Description:
+                          </Grid>
+                          <Grid
+                            className={"itemText"}
+                            item
+                            xs={8}
+                            onClick={() => this.getItem(post)}
+                          >
+                            {post.description}
+                          </Grid>
+                          <Grid
+                            className={"itemSubHeaderText"}
+                            item
+                            xs={4}
+                            onClick={() => this.getItem(post)}
+                          >
+                            Notes:
+                          </Grid>
+                          <Grid
+                            className={"itemText"}
+                            item
+                            xs={8}
+                            onClick={() => this.getItem(post)}
+                          >
+                            {post.notes ? post.notes : "....."}
+                          </Grid>
+                        </Grid>
                       </Grid>
-                      <Grid className={"itemHeaderText"} item xs={2}>
-                        <PostMenu getid={post._id}/>
-                      </Grid>
-                      <Grid className={"itemSubHeaderText"} item xs={4} onClick={() => this.getItem(post)}>
-                        Description:
-                      </Grid>
-                      <Grid className={"itemText"} item xs={8} onClick={() => this.getItem(post)}>
-                        {post.description}
-                      </Grid>
-                      <Grid className={"itemSubHeaderText"} item xs={4} onClick={() => this.getItem(post)}>
-                        Notes:
-                      </Grid>
-                      <Grid className={"itemText"} item xs={8} onClick={() => this.getItem(post)}>
-                        {post.notes ? post.notes : "....."}
-                      </Grid>
-                    </Grid>
-                  </Card>
-                </Grid>
-              ))
+                    </Paper>
+                  </Grid>
+                ))
+              ) : (
+                <h1>Its empty</h1>
+              )
             ) : (
-              <h1>Its empty</h1>
-            )
-          ) : (
-            <h1>{error}</h1>
-          )
-  }
-        </Grid>
+              <h1>{error}</h1>
+            )}
+          </Grid>
 
-        <Dialog
-          open={this.state.open}
-          onClose={this.handleClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogContent>
-            <CreatePost handleClose={this.handleClose} action="Edit Post" post={this.state.item} />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} className={"btnClass"}>
-              Cancel
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-}else{
-  return(
-  <div>
-    <Redirect to={{
-      pathname: '/postDetails',
-      item: { item: this.state.item}
-    }} />
-  </div>
-  );
-}
+          <Dialog
+            open={this.state.open}
+            onClose={this.handleClose}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogContent>
+              <CreatePost
+                handleClose={this.handleClose}
+                action="View Post"
+                post={this.state.item}
+                handleRefresh={() => this.props.handleClick("its me Child")}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleClose} className={"btnClass"}>
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      );
+    } else {
+      return (
+           <Link to="/postDetails"underline="none">
+            <PostDetailsContainer post={this.state.item} />
+          </Link> 
+      );
+    }
   }
 }
 

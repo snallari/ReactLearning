@@ -34,7 +34,8 @@ import GetPost from './components/API/GetPostList/GetPost';
 import CreatePost from './components/API/Dialogs/CreatePost';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { createTheme } from '@material-ui/core/styles';
-import PostDetails from './components/API/Details/PostDetails';
+import PostDetailsContainer from './components/API/Details/PostDetailsContainer';
+import ClassesTheme from './components/API/ClassesTheme';
 // function App() {
 //   return (
 //     <div className="App">
@@ -98,24 +99,33 @@ import PostDetails from './components/API/Details/PostDetails';
 //       default: '#fff',
 //     },
 //   },
+//   overrides: {
+//     MuiTimeline: {
+//       root: {
+//         backgroundColor: 'red',
+//       },
+//     },
+//   }
 // });
 
 const App = () => (
+  <ThemeProvider theme={ClassesTheme}>
   <Router>
     <Suspense fallback={<div>Loading...</div>}>
       <Switch>
-        <Route path="/">
+        <Route exact path="/">
             <ParentPost />
         </Route>
         <Route path="/posts">
             <ParentPost />
         </Route>
         <Route path="/postDetails">
-           <PostDetails/>
+           <PostDetailsContainer/>
         </Route>
       </Switch>
     </Suspense>
   </Router>
+  </ThemeProvider>
 );
 
 export default App;

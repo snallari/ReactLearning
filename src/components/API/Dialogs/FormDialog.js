@@ -15,8 +15,8 @@ export class FormDialog extends Component {
         super(props)
 
         this.state = {
-            open: false
-            
+            open: false,
+            isAdmin:props.isAdmin,
         }
     }
 
@@ -29,21 +29,24 @@ export class FormDialog extends Component {
 
     handleClose = () => {
         this.setState({
-            open: false
+            open: false,
         })
     }
 
     render() {
         return (
             <div>
-                <IconButton aria-label="delete" onClick={this.handleClickOpen}>
-                        <p className={"addPost"}> Add Post</p>
-                     <AddCircleIcon className={"addPost"}> </AddCircleIcon>
+                {this.state.isAdmin?(
+                    <IconButton aria-label="delete" onClick={this.handleClickOpen}>
+                    <p className={"addPost"}> Add Post</p>
+                 <AddCircleIcon className={"addPost"}> </AddCircleIcon>
                 </IconButton>
+                ):<p>Welcome Students</p>}
+                
 
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogContent>
-                        <CreatePost handleClose={this.handleClose}/>
+                        <CreatePost handleClose={this.handleClose} handleRefresh={()=>this.props.handleClick("its me Child")}/>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} className={"btnClass"}>

@@ -12,8 +12,10 @@ import {
 } from "@material-ui/core";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import EditIcon from '@material-ui/icons/Edit';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
+import Alert from '@material-ui/lab/Alert';
 import "../ParentPost.css";
 import {
   BrowserRouter as Router,
@@ -38,20 +40,22 @@ export class CreatePost extends Component {
       heading:"Create Post",
       errorTitle: "",
       errorDesc: "",
+      isReadOnly:false,
     };
   }
 
   componentDidMount(){
+    console.log(this.props)
     if(this.props.post){
+      const {_id, title, description, notes, classType}=this.props.post
       this.setState({
         heading:this.props.action,
-        id:this.props.post._id,
-        title: this.props.post.title,
-        description: this.props.post.description,
-        classType:"math8",
-        notes:this.props.post.notes,
-        errorTitle: "",
-        errorDesc: "",
+        id:_id,
+        title: title,
+        description: description,
+        classType:classType?classType:"math8",
+        notes:notes,
+        isReadOnly:true
       })
     }
   }
@@ -61,7 +65,7 @@ export class CreatePost extends Component {
     let list=[]
     let data
     let url=""
-    if(this.state.heading !== "Edit Post"){
+    if(this.state.heading === "Create Post"){
       const { title, description, notes, classType} = this.state;
       data={
         "title":title,
@@ -90,6 +94,7 @@ export class CreatePost extends Component {
         if (response.insertedCount != 0) {
           this.isRedirect = true;
           this.props.handleClose();
+          this.props.handleRefresh();
         }
       })
       .catch((response) => {});
@@ -148,23 +153,33 @@ export class CreatePost extends Component {
     });
   };
 
+  handleEdit=(event)=>{
+    this.setState({
+      isReadOnly:false,
+      heading:"Edit Post"
+    });
+  }
+
   render() {
     return (
       <Container className={"post"}>
         <Typography variant="h6" gutterBottom>
-          {this.state.heading}
+          {this.state.heading} <EditIcon onClick={this.handleEdit}></EditIcon>
         </Typography>
         <FormGroup>
           <TextField
             id="outlined-basic1"
             label="Title"
             name="title"
-            variant="outlined"
+            variant={this.state.isReadOnly?'standard':'outlined'}
+            elevation={this.state.isReadOnly?0:3}
+            disabled={this.state.isReadOnly?true:false}
             error={this.state.errorTitle ? true : false}
             value={this.state.title}
             onChange={this.handleText}
             onBlur={this.handleError}
             helperText={this.state.errorTitle}
+            autoFocus={true}
             multiline
           />
           {/* <FormHelperText error="true">{this.state.errorTitle}</FormHelperText> */}
@@ -172,7 +187,8 @@ export class CreatePost extends Component {
             id="outlined-basic2"
             label="Description"
             name="desc"
-            variant="outlined"
+            variant={this.state.isReadOnly?'standard':'outlined'}
+            disabled={this.state.isReadOnly?true:false}
             error={this.state.errorDesc ? true : false}
             value={this.state.description}
             onChange={this.handleText}
@@ -187,6 +203,8 @@ export class CreatePost extends Component {
             name="notes"
             variant="outlined"
             value={this.state.notes}
+            variant={this.state.isReadOnly?'standard':'outlined'}
+            disabled={this.state.isReadOnly?true:false}
             onChange={this.handleText}
             className={"mar-top"}
           />
@@ -198,6 +216,7 @@ export class CreatePost extends Component {
               name="selectClass"
               value={this.state.classType}
               onChange={this.handleClass}
+              disabled={this.state.isReadOnly?true:false}
             >
               <FormControlLabel
                 value="mathCore"
@@ -213,6 +232,7 @@ export class CreatePost extends Component {
             </RadioGroup>
           </FormControl>
           {/* <FormHelperText>{this.state.errorDesc}</FormHelperText> */}
+          {!this.state.isReadOnly?(
           <Button
             className={("btnClass", "mar-top")}
             variant="contained"
@@ -221,8 +241,8 @@ export class CreatePost extends Component {
             disabled={this.state.errorTitle || this.state.errorDesc}
           >
             Submit
-          </Button>
-          {/* <button onClick={this.sendPost}>Submit</button> */}
+          </Button>):<Alert severity="info">To Edit hit the pencil icon</Alert>
+            }          {/* <button onClick={this.sendPost}>Submit</button> */}
         </FormGroup>
       </Container>
     );
